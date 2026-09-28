@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+
+<meta name="theme-color" content="#081421">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<title>MD Drive</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+:root{
+  --bg:#07111c;
+  --panel:#0d1c2b;
+  --panel2:#122538;
+  --line:rgba(255,255,255,.08);
+  --text:#f5f8fc;
+  --muted:#8fa4b8;
+  --blue:#1d8cff;
+  --blue2:#50b7ff;
+  --danger:#ff5263;
+  --green:#37d58a;
+}
+
+html,body{
+  margin:0;
+  width:100%;
+  min-height:100%;
+  background:
+    radial-gradient(circle at 15% 0%,#123a5c 0,transparent 32%),
+    radial-gradient(circle at 100% 20%,#241d58 0,transparent 35%),
+    var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+}
+
+button,input{
+  font:inherit;
+}
+
+button{
+  color:inherit;
+}
+
+.app{
+  width:min(100%,1100px);
+  margin:auto;
+  min-height:100dvh;
+  padding:
+    max(20px,env(safe-area-inset-top))
+    18px
+    calc(100px + env(safe-area-inset-bottom));
+}
+
+/* HEADER */
+
+header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:24px;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-size:23px;
+  font-weight:800;
+}
+
+.logo{
+  width:44px;
+  height:44px;
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,#198cff,#63d4ff);
+  box-shadow:0 10px 30px rgba(0,136,255,.3);
+  font-size:24px;
+}
+
+.avatar{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  background:rgba(255,255,255,.1);
+  display:grid;
+  place-items:center;
+  font-weight:700;
+}
+
+/* STORAGE */
+
+.storage{
+  background:linear-gradient(135deg,
+    rgba(25,140,255,.18),
+    rgba(82,91,255,.12));
+  border:1px solid var(--line);
+  border-radius:22px;
+  padding:18px;
+  margin-bottom:18px;
+  backdrop-filter:blur(18px);
+}
+
+.storageTop{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:12px;
+}
+
+.storageTitle{
+  font-weight:700;
+}
+
+.storageText{
+  color:var(--muted);
+  font-size:13px;
+}
+
+.bar{
+  height:7px;
+  background:rgba(255,255,255,.08);
+  border-radius:20px;
+  overflow:hidden;
+}
+
+.barFill{
+  height:100%;
+  width:0%;
+  border-radius:20px;
+  background:linear-gradient(90deg,var(--blue),var(--blue2));
+  transition:.3s;
+}
+
+/* SEARCH */
+
+.search{
+  position:relative;
+  margin-bottom:18px;
+}
+
+.search input{
+  width:100%;
+  border:none;
+  outline:none;
+  background:rgba(255,255,255,.07);
+  border:1px solid var(--line);
+  color:white;
+  padding:15px 18px 15px 46px;
+  border-radius:17px;
+}
+
+.searchIcon{
+  position:absolute;
+  left:17px;
+  top:50%;
+  transform:translateY(-50%);
+  opacity:.55;
+}
+
+/* ACTIONS */
+
+.actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-bottom:25px;
+}
+
+.action{
+  border:none;
+  min-height:90px;
+  border-radius:20px;
+  padding:16px;
+  text-align:left;
+  background:rgba(255,255,255,.07);
+  border:1px solid var(--line);
+  cursor:pointer;
+}
+
+.action.primary{
+  background:linear-gradient(135deg,#087fff,#225cff);
+}
+
+.actionIcon{
+  font-size:27px;
+  margin-bottom:8px;
+}
+
+.actionTitle{
+  font-weight:700;
+}
+
+.actionSub{
+  color:rgba(255,255,255,.6);
+  font-size:12px;
+  margin-top:4px;
+}
+
+/* FILTERS */
+
+.filters{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  scrollbar-width:none;
+  margin-bottom:22px;
+}
+
+.filters::-webkit-scrollbar{
+  display:none;
+}
+
+.filter{
+  white-space:nowrap;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.06);
+  padding:9px 14px;
+  border-radius:50px;
+  color:var(--muted);
+  cursor:pointer;
+}
+
+.filter.active{
+  background:white;
+  color:#07111c;
+}
+
+/* TITLE */
+
+.sectionTitle{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:12px;
+}
+
+.sectionTitle h2{
+  margin:0;
+  font-size:19px;
+}
+
+.count{
+  color:var(--muted);
+  font-size:13px;
+}
+
+/* FILES */
+
+.files{
+  display:flex;
+  flex-direction:column;
+  gap:9px;
+}
+
+.file{
+  display:flex;
+  align-items:center;
+  gap:13px;
+  padding:12px;
+  border-radius:17px;
+  background:rgba(255,255,255,.055);
+  border:1px solid var(--line);
+  backdrop-filter:blur(12px);
+}
+
+.fileIcon{
+  flex:none;
+  width:48px;
+  height:48px;
+  border-radius:14px;
+  background:rgba(255,255,255,.08);
+  display:grid;
+  place-items:center;
+  font-size:23px;
+}
+
+.fileInfo{
+  flex:1;
+  min-width:0;
+}
+
+.fileName{
+  font-weight:650;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.fileMeta{
+  color:var(--muted);
+  font-size:12px;
+  margin-top:5px;
+}
+
+.menuBtn{
+  width:38px;
+  height:38px;
+  border:0;
+  border-radius:12px;
+  background:transparent;
+  font-size:22px;
+  cursor:pointer;
+}
+
+/* EMPTY */
+
+.empty{
+  padding:55px 20px;
+  text-align:center;
+  color:var(--muted);
+}
+
+.emptyIcon{
+  font-size:50px;
+  margin-bottom:12px;
+}
+
+/* NAV */
+
+nav{
+  position:fixed;
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:min(100%,1100px);
+  padding:10px 16px calc(10px + env(safe-area-inset-bottom));
+  display:flex;
+  justify-content:space-around;
+  background:rgba(6,16,27,.88);
+  backdrop-filter:blur(25px);
+  border-top:1px solid var(--line);
+  z-index:20;
+}
+
+.navItem{
+  border:none;
+  background:none;
+  color:var(--muted);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:3px;
+  font-size:11px;
+}
+
+.navItem span{
+  font-size:21px;
+}
+
+.navItem.active{
+  color:#49aaff;
+}
+
+/* MODAL */
+
+.overlay{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  display:none;
+  align-items:flex-end;
+  justify-content:center;
+  background:rgba(0,0,0,.55);
+  backdrop-filter:blur(6px);
+}
+
+.overlay.show{
+  display:flex;
+}
+
+.sheet{
+  width:min(100%,600px);
+  background:#101f2e;
+  border-radius:27px 27px 0 0;
+  padding:12px 18px calc(25px + env(safe-area-inset-bottom));
+  animation:up .25s ease;
+}
+
+@keyframes up{
+  from{transform:translateY(100%)}
+  to{transform:translateY(0)}
+}
+
+.handle{
+  width:45px;
+  height:5px;
+  border-radius:5px;
+  background:#536575;
+  margin:0 auto 18px;
+}
+
+.sheetName{
+  font-weight:750;
+  font-size:17px;
+  margin-bottom:15px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.sheetBtn{
+  width:100%;
+  border:none;
+  background:rgba(255,255,255,.06);
+  margin:7px 0;
+  padding:15px;
+  border-radius:15px;
+  text-align:left;
+}
+
+.sheetBtn.danger{
+  color:#ff6876;
+}
+
+/* TOAST */
+
+.toast{
+  position:fixed;
+  z-index:300;
+  left:50%;
+  bottom:100px;
+  transform:translate(-50%,30px);
+  opacity:0;
+  pointer-events:none;
+  background:white;
+  color:#111;
+  padding:11px 18px;
+  border-radius:30px;
+  font-size:13px;
+  transition:.25s;
+}
+
+.toast.show{
+  opacity:1;
+  transform:translate(-50%,0);
+}
+
+/* DESKTOP */
+
+@media(min-width:750px){
+
+  .app{
+    padding-left:40px;
+    padding-right:40px;
+  }
+
+  .actions{
+    grid-template-columns:220px 220px;
+  }
+
+  .files{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+  }
+
+  nav{
+    width:auto;
+    left:auto;
+    right:30px;
+    bottom:25px;
+    transform:none;
+    border:1px solid var(--line);
+    border-radius:22px;
+    padding:9px 20px;
+    gap:30px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+  <div class="brand">
+    <div class="logo">☁️</div>
+    MD Drive
+  </div>
+
+  <div class="avatar">MD</div>
+</header>
+
+<section class="storage">
+  <div class="storageTop">
+    <div>
+      <div class="storageTitle">Моё хранилище</div>
+      <div class="storageText" id="storageText">Подсчёт...</div>
+    </div>
+
+    <div>☁️</div>
+  </div>
+
+  <div class="bar">
+    <div class="barFill" id="barFill"></div>
+  </div>
+</section>
+
+<div class="search">
+  <div class="searchIcon">⌕</div>
+  <input
+    id="search"
+    placeholder="Поиск файлов..."
+    autocomplete="off">
+</div>
+
+<div class="actions">
+
+  <button class="action primary" onclick="pickFiles()">
+    <div class="actionIcon">⇧</div>
+    <div class="actionTitle">Загрузить</div>
+    <div class="actionSub">Фото, видео, документы</div>
+  </button>
+
+  <button class="action" onclick="createFolderDemo()">
+    <div class="actionIcon">📁</div>
+    <div class="actionTitle">Новая папка</div>
+    <div class="actionSub">Организовать файлы</div>
+  </button>
+
+</div>
+
+<input
+  id="fileInput"
+  type="file"
+  multiple
+  hidden>
+
+<div class="filters">
+
+  <button class="filter active" data-filter="all">
+    Все
+  </button>
+
+  <button class="filter" data-filter="image">
+    Фото
+  </button>
+
+  <button class="filter" data-filter="video">
+    Видео
+  </button>
+
+  <button class="filter" data-filter="document">
+    Документы
+  </button>
+
+  <button class="filter" data-filter="other">
+    Другое
+  </button>
+
+</div>
+
+<div class="sectionTitle">
+  <h2>Мои файлы</h2>
+  <div class="count" id="count"></div>
+</div>
+
+<div id="files" class="files"></div>
+
+</div>
+
+<nav>
+
+<button class="navItem active">
+  <span>📁</span>
+  Файлы
+</button>
+
+<button class="navItem" onclick="toast('Общие ссылки появятся после подключения сервера')">
+  <span>🔗</span>
+  Общие
+</button>
+
+<button class="navItem" onclick="toast('Избранное добавим следующим шагом')">
+  <span>☆</span>
+  Избранное
+</button>
+
+<button class="navItem" onclick="toast('Настройки MD Drive')">
+  <span>☰</span>
+  Меню
+</button>
+
+</nav>
+
+<div class="overlay" id="overlay" onclick="closeSheet(event)">
+
+  <div class="sheet">
+
+    <div class="handle"></div>
+
+    <div class="sheetName" id="sheetName"></div>
+
+    <button class="sheetBtn" onclick="openCurrent()">
+      👁 Открыть
+    </button>
+
+    <button class="sheetBtn" onclick="shareCurrent()">
+      🔗 Поделиться
+    </button>
+
+    <button class="sheetBtn" onclick="renameCurrent()">
+      ✏️ Переименовать
+    </button>
+
+    <button class="sheetBtn danger" onclick="deleteCurrent()">
+      🗑 Удалить
+    </button>
+
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+
+const DB_NAME = "MDDrive";
+const STORE = "files";
+
+let db;
+let allFiles = [];
+let currentFilter = "all";
+let selectedFile = null;
+
+/* DATABASE */
+
+const request = indexedDB.open(DB_NAME,1);
+
+request.onupgradeneeded = e => {
+
+  const database = e.target.result;
+
+  if(!database.objectStoreNames.contains(STORE)){
+    database.createObjectStore(
+      STORE,
+      {
+        keyPath:"id",
+        autoIncrement:true
+      }
+    );
+  }
+
+};
+
+request.onsuccess = e => {
+
+  db = e.target.result;
+
+  loadFiles();
+
+};
+
+request.onerror = () => {
+  alert("Не удалось открыть хранилище");
+};
+
+/* FILE PICKER */
+
+function pickFiles(){
+
+  document.getElementById("fileInput").click();
+
+}
+
+document
+.getElementById("fileInput")
+.addEventListener("change",async e=>{
+
+  const files = [...e.target.files];
+
+  for(const file of files){
+
+    await saveFile(file);
+
+  }
+
+  e.target.value="";
+
+  loadFiles();
+
+});
+
+/* SAVE */
+
+function saveFile(file){
+
+  return new Promise((resolve,reject)=>{
+
+    const tx = db.transaction(STORE,"readwrite");
+
+    const store = tx.objectStore(STORE);
+
+    store.add({
+
+      name:file.name,
+      type:file.type,
+      size:file.size,
+      date:Date.now(),
+      blob:file
+
+    });
+
+    tx.oncomplete=resolve;
+    tx.onerror=reject;
+
+  });
+
+}
+
+/* LOAD */
+
+function loadFiles(){
+
+  const tx = db.transaction(STORE,"readonly");
+
+  const store = tx.objectStore(STORE);
+
+  const req = store.getAll();
+
+  req.onsuccess=()=>{
+
+    allFiles=req.result.sort(
+      (a,b)=>b.date-a.date
+    );
+
+    renderFiles();
+
+    updateStorage();
+
+  };
+
+}
+
+/* RENDER */
+
+function renderFiles(){
+
+  const box=document.getElementById("files");
+
+  const query=
+    document
+    .getElementById("search")
+    .value
+    .toLowerCase();
+
+  let list=allFiles.filter(file=>{
+
+    const searchMatch=
+      file.name
+      .toLowerCase()
+      .includes(query);
+
+    if(!searchMatch) return false;
+
+    if(currentFilter==="all")
+      return true;
+
+    return getCategory(file)===currentFilter;
+
+  });
+
+  document.getElementById("count").textContent =
+    list.length + " файлов";
+
+  if(!list.length){
+
+    box.innerHTML=`
+      <div class="empty">
+        <div class="emptyIcon">☁️</div>
+        Здесь пока ничего нет
+      </div>
+    `;
+
+    return;
+
+  }
+
+  box.innerHTML=list.map(file=>`
+
+    <div class="file">
+
+      <div class="fileIcon">
+        ${iconFor(file)}
+      </div>
+
+      <div class="fileInfo"
+           onclick="openFile(${file.id})">
+
+        <div class="fileName">
+          ${escapeHTML(file.name)}
+        </div>
+
+        <div class="fileMeta">
+          ${formatSize(file.size)}
+          ·
+          ${formatDate(file.date)}
+        </div>
+
+      </div>
+
+      <button
+        class="menuBtn"
+        onclick="showMenu(${file.id})">
+        ⋮
+      </button>
+
+    </div>
+
+  `).join("");
+
+}
+
+/* CATEGORY */
+
+function getCategory(file){
+
+  if(file.type.startsWith("image/"))
+    return "image";
+
+  if(file.type.startsWith("video/"))
+    return "video";
+
+  if(
+    file.type.includes("pdf") ||
+    file.type.includes("text") ||
+    file.type.includes("word") ||
+    file.type.includes("sheet") ||
+    file.type.includes("document")
+  )
+    return "document";
+
+  return "other";
+
+}
+
+function iconFor(file){
+
+  const cat=getCategory(file);
+
+  if(cat==="image") return "🖼️";
+  if(cat==="video") return "▶️";
+  if(cat==="document") return "📄";
+
+  return "📦";
+
+}
+
+/* OPEN */
+
+function openFile(id){
+
+  const file=allFiles.find(f=>f.id===id);
+
+  if(!file) return;
+
+  const url=URL.createObjectURL(file.blob);
+
+  window.open(url,"_blank");
+
+  setTimeout(
+    ()=>URL.revokeObjectURL(url),
+    60000
+  );
+
+}
+
+/* MENU */
+
+function showMenu(id){
+
+  selectedFile=
+    allFiles.find(f=>f.id===id);
+
+  if(!selectedFile) return;
+
+  document.getElementById("sheetName")
+    .textContent=selectedFile.name;
+
+  document.getElementById("overlay")
+    .classList.add("show");
+
+}
+
+function closeSheet(e){
+
+  if(
+    e &&
+    e.target.id!=="overlay"
+  ) return;
+
+  document.getElementById("overlay")
+    .classList.remove("show");
+
+}
+
+function openCurrent(){
+
+  if(selectedFile)
+    openFile(selectedFile.id);
+
+  closeSheet();
+
+}
+
+/* DELETE */
+
+function deleteCurrent(){
+
+  if(!selectedFile) return;
+
+  if(
+    !confirm(
+      `Удалить "${selectedFile.name}"?`
+    )
+  ) return;
+
+  const tx=db.transaction(
+    STORE,
+    "readwrite"
+  );
+
+  tx.objectStore(STORE)
+    .delete(selectedFile.id);
+
+  tx.oncomplete=()=>{
+
+    closeSheet();
+
+    toast("Файл удалён");
+
+    loadFiles();
+
+  };
+
+}
+
+/* RENAME */
+
+function renameCurrent(){
+
+  if(!selectedFile) return;
+
+  const newName=prompt(
+    "Новое название",
+    selectedFile.name
+  );
+
+  if(
+    !newName ||
+    newName===selectedFile.name
+  ) return;
+
+  const updated={
+    ...selectedFile,
+    name:newName
+  };
+
+  const tx=db.transaction(
+    STORE,
+    "readwrite"
+  );
+
+  tx.objectStore(STORE)
+    .put(updated);
+
+  tx.oncomplete=()=>{
+
+    closeSheet();
+
+    toast("Файл переименован");
+
+    loadFiles();
+
+  };
+
+}
+
+/* SHARE */
+
+async function shareCurrent(){
+
+  if(!selectedFile) return;
+
+  try{
+
+    const file=new File(
+      [selectedFile.blob],
+      selectedFile.name,
+      {
+        type:selectedFile.type
+      }
+    );
+
+    if(
+      navigator.share &&
+      navigator.canShare &&
+      navigator.canShare({
+        files:[file]
+      })
+    ){
+
+      await navigator.share({
+        files:[file],
+        title:selectedFile.name
+      });
+
+    }else{
+
+      toast(
+        "Публичные ссылки подключим через сервер"
+      );
+
+    }
+
+  }catch(e){}
+
+  closeSheet();
+
+}
+
+/* STORAGE */
+
+function updateStorage(){
+
+  const used=allFiles.reduce(
+    (sum,file)=>sum+file.size,
+    0
+  );
+
+  /*
+    Условный лимит локальной версии.
+    Реальный лимит IndexedDB определяет браузер.
+  */
+
+  const displayLimit=
+    1024*1024*1024;
+
+  const percent=Math.min(
+    used/displayLimit*100,
+    100
+  );
+
+  document.getElementById("storageText")
+    .textContent =
+      `${formatSize(used)} занято`;
+
+  document.getElementById("barFill")
+    .style.width =
+      percent+"%";
+
+}
+
+/* FILTER */
+
+document
+.querySelectorAll(".filter")
+.forEach(btn=>{
+
+  btn.onclick=()=>{
+
+    document
+    .querySelectorAll(".filter")
+    .forEach(x=>
+      x.classList.remove("active")
+    );
+
+    btn.classList.add("active");
+
+    currentFilter=
+      btn.dataset.filter;
+
+    renderFiles();
+
+  };
+
+});
+
+/* SEARCH */
+
+document
+.getElementById("search")
+.addEventListener(
+  "input",
+  renderFiles
+);
+
+/* DEMO FOLDER */
+
+function createFolderDemo(){
+
+  toast(
+    "Папки подключим на следующем этапе"
+  );
+
+}
+
+/* HELPERS */
+
+function formatSize(bytes){
+
+  if(!bytes)
+    return "0 Б";
+
+  const units=[
+    "Б",
+    "КБ",
+    "МБ",
+    "ГБ"
+  ];
+
+  const i=Math.floor(
+    Math.log(bytes)/
+    Math.log(1024)
+  );
+
+  return (
+    bytes/
+    Math.pow(1024,i)
+  ).toFixed(
+    i ? 1 : 0
+  )+" "+units[i];
+
+}
+
+function formatDate(time){
+
+  return new Date(time)
+    .toLocaleDateString(
+      "ru-RU",
+      {
+        day:"numeric",
+        month:"short"
+      }
+    );
+
+}
+
+function escapeHTML(str){
+
+  return str.replace(
+    /[&<>"']/g,
+    c=>({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#039;"
+    })[c]
+  );
+
+}
+
+/* TOAST */
+
+let toastTimer;
+
+function toast(text){
+
+  const el=
+    document.getElementById("toast");
+
+  el.textContent=text;
+
+  el.classList.add("show");
+
+  clearTimeout(toastTimer);
+
+  toastTimer=setTimeout(
+    ()=>el.classList.remove("show"),
+    2200
+  );
+
+}
+
+</script>
+
+</body>
+</html>
